@@ -46,32 +46,31 @@ interface ForecastAPIResponse {
   }>;
 }
 
+interface APIResponse {
+  current: WeatherAPIResponse;
+  forecast: ForecastAPIResponse;
+}
+
 export default function Weather() {
   const [weather, setWeather] = useState<WeatherData | null>(null);
   const [forecast, setForecast] = useState<ForecastData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchWeather = async () => {
       try {
-        const [currentResponse, forecastResponse] = await Promise.all([
-          fetch(
-            `https://api.openweathermap.org/data/2.5/weather?lat=${process.env.NEXT_PUBLIC_LATITUDE}&lon=${process.env.NEXT_PUBLIC_LONGITUDE}&appid=${process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY}&units=metric`
-          ),
-          fetch(
-            `https://api.openweathermap.org/data/2.5/forecast?lat=${process.env.NEXT_PUBLIC_LATITUDE}&lon=${process.env.NEXT_PUBLIC_LONGITUDE}&appid=${process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY}&units=metric`
-          )
-        ]);
-
-        const currentData: WeatherAPIResponse = await currentResponse.json();
-        const forecastData: ForecastAPIResponse = await forecastResponse.json();
-
-        // Remove unused code for today's forecasts
-        // const today = new Date().toISOString().split('T')[0];
-        // const todayForecasts = forecastData.list.filter((item) => 
-        //   item.dt_txt.startsWith(today)
-        // );
+        setError(null);
+        const response = await fetch('/api/weather');
+        const data: APIResponse = await response.json();
         
+        if ('error' in data) {
+          throw new Error(data.error as string);
+        }
+
+        const currentData = data.current;
+        const forecastData = data.forecast;
+
         setWeather({
           temp: Math.round(currentData.main.temp),
           temp_min: Math.round(currentData.main.temp_min),
@@ -83,8 +82,7 @@ export default function Weather() {
 
         // Process forecast data
         const dailyForecasts = forecastData.list
-          // Group by day and take the middle of the day reading (noon)
-          .filter((item) => item.dt_txt.includes('12:00:00'))
+          .filter((item: ForecastAPIResponse['list'][0]) => item.dt_txt.includes('12:00:00'))
           .slice(0, 5)
           .map((item) => ({
             date: new Date(item.dt * 1000).toLocaleDateString('en-US', { weekday: 'short' }),
@@ -96,6 +94,9 @@ export default function Weather() {
         setForecast(dailyForecasts);
       } catch (error) {
         console.error('Error fetching weather:', error);
+        setError(error instanceof Error ? error.message : 'Failed to load weather data');
+        setWeather(null);
+        setForecast([]);
       } finally {
         setLoading(false);
       }
@@ -109,6 +110,7 @@ export default function Weather() {
   }, []);
 
   if (loading) return <div>Loading weather...</div>;
+  if (error) return <div className="text-red-500">Error: {error}</div>;
   if (!weather) return <div>Unable to load weather</div>;
 
   return (
