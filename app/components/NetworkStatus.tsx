@@ -67,7 +67,7 @@ export default function NetworkStatus() {
   }, []);
 
   return (
-    <div className="text-lg mt-6">
+    <div className="text-xl mt-6">
       {network.online ? (
         <div className="flex items-center gap-2">
           <span className="text-green-400">●</span>
