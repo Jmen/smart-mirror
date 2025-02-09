@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic';
 import Weather from './components/Weather';
 import NetworkStatus from './components/NetworkStatus';
+import TubeStatus from './components/TubeStatus';
 
 const Clock = dynamic(() => import('./components/Clock'), {
   ssr: false,
@@ -14,6 +15,7 @@ export default function Home() {
       <div className="flex flex-col items-start w-full">
         <Clock />
         <Weather />
+        <TubeStatus />
         <NetworkStatus />
       </div>
     </div>
