@@ -126,7 +126,7 @@ export default function Weather() {
             unoptimized
           />
           <div className="flex flex-col ml-2">
-            <span className="text-5xl">Actual {weather.temp}°C</span>
+            <span className="text-5xl font-bold">Actual {weather.temp}°C</span>
             <span className="text-4xl text-gray-400">Feels Like {weather.feels_like}°</span>
             <div className="text-3xl">
               <span className="text-red-400">{weather.temp_max}°</span>

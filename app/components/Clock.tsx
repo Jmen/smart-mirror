@@ -23,7 +23,7 @@ export default function Clock() {
           day: 'numeric'
         })}
       </div>
-      <div className="text-8xl font-bold">
+      <div className="text-9xl font-bold">
         {time.toLocaleTimeString('en-US', {
           hour: '2-digit',
           minute: '2-digit',
