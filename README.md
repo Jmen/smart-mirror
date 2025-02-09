@@ -38,6 +38,15 @@ NEXT_PUBLIC_LATITUDE=your_latitude
 NEXT_PUBLIC_LONGITUDE=your_longitude
 ```
 
+Add the following to your `.eslintrc.json` to handle TypeScript any types:
+```json
+{
+  "rules": {
+    "@typescript-eslint/no-explicit-any": "off"
+  }
+}
+```
+
 Then, run the development server:
 
 ```bash

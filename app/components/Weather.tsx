@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 interface WeatherData {
   temp: number;
@@ -16,6 +17,33 @@ interface ForecastData {
   temp: number;
   icon: string;
   description: string;
+}
+
+interface WeatherAPIResponse {
+  main: {
+    temp: number;
+    temp_min: number;
+    temp_max: number;
+    feels_like: number;
+  };
+  weather: Array<{
+    description: string;
+    icon: string;
+  }>;
+}
+
+interface ForecastAPIResponse {
+  list: Array<{
+    dt: number;
+    dt_txt: string;
+    main: {
+      temp: number;
+    };
+    weather: Array<{
+      description: string;
+      icon: string;
+    }>;
+  }>;
 }
 
 export default function Weather() {
@@ -35,20 +63,14 @@ export default function Weather() {
           )
         ]);
 
-        const currentData = await currentResponse.json();
-        const forecastData = await forecastResponse.json();
+        const currentData: WeatherAPIResponse = await currentResponse.json();
+        const forecastData: ForecastAPIResponse = await forecastResponse.json();
 
-        // Get today's date
-        const today = new Date().toISOString().split('T')[0];
-        
-        // Filter forecast items for today to get min/max
-        const todayForecasts = forecastData.list.filter((item: any) => 
-          item.dt_txt.startsWith(today)
-        );
-
-        const todayTemps = todayForecasts.map((item: any) => item.main.temp);
-        const temp_min = Math.round(Math.min(...todayTemps));
-        const temp_max = Math.round(Math.max(...todayTemps));
+        // Remove unused code for today's forecasts
+        // const today = new Date().toISOString().split('T')[0];
+        // const todayForecasts = forecastData.list.filter((item) => 
+        //   item.dt_txt.startsWith(today)
+        // );
         
         setWeather({
           temp: Math.round(currentData.main.temp),
@@ -62,9 +84,9 @@ export default function Weather() {
         // Process forecast data
         const dailyForecasts = forecastData.list
           // Group by day and take the middle of the day reading (noon)
-          .filter((item: any) => item.dt_txt.includes('12:00:00'))
+          .filter((item) => item.dt_txt.includes('12:00:00'))
           .slice(0, 5)
-          .map((item: any) => ({
+          .map((item) => ({
             date: new Date(item.dt * 1000).toLocaleDateString('en-US', { weekday: 'short' }),
             temp: Math.round(item.main.temp),
             icon: item.weather[0].icon,
@@ -94,11 +116,12 @@ export default function Weather() {
       {/* Current Weather */}
       <div className="flex flex-col items-start mb-6">
         <div className="flex items-start">
-          <img 
+          <Image 
             src={`http://openweathermap.org/img/wn/${weather.icon}@2x.png`}
             alt={weather.description}
             width={80}
             height={80}
+            unoptimized
           />
           <div className="flex flex-col ml-2">
             <span className="text-3xl">Actual {weather.temp}°C</span>
@@ -117,11 +140,12 @@ export default function Weather() {
         {forecast.map((day) => (
           <div key={day.date} className="flex flex-col items-center">
             <div className="text-sm">{day.date}</div>
-            <img 
+            <Image 
               src={`http://openweathermap.org/img/wn/${day.icon}.png`}
               alt={day.description}
               width={40}
               height={40}
+              unoptimized
             />
             <div className="text-sm">{day.temp}°C</div>
           </div>

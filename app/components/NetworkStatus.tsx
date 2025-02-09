@@ -8,6 +8,19 @@ interface NetworkState {
   effectiveType?: string;
 }
 
+interface Connection {
+  downlink: number;
+  effectiveType: string;
+  addEventListener: (event: string, handler: () => void) => void;
+  removeEventListener: (event: string, handler: () => void) => void;
+}
+
+declare global {
+  interface Navigator {
+    connection?: Connection;
+  }
+}
+
 export default function NetworkStatus() {
   const [network, setNetwork] = useState<NetworkState>({
     online: true
@@ -24,12 +37,12 @@ export default function NetworkStatus() {
 
     // Update connection info if available
     const updateConnectionStatus = () => {
-      const connection = (navigator as any).connection;
+      const connection = navigator.connection;
       if (connection) {
         setNetwork({
           online: navigator.onLine,
-          downlink: connection.downlink, // Mbps
-          effectiveType: connection.effectiveType // 4g, 3g, etc.
+          downlink: connection.downlink,
+          effectiveType: connection.effectiveType
         });
       }
     };
@@ -37,7 +50,7 @@ export default function NetworkStatus() {
     window.addEventListener('online', updateOnlineStatus);
     window.addEventListener('offline', updateOnlineStatus);
 
-    const connection = (navigator as any).connection;
+    const connection = navigator.connection;
     if (connection) {
       connection.addEventListener('change', updateConnectionStatus);
       // Initial check
