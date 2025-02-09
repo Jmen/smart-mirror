@@ -114,7 +114,7 @@ export default function Weather() {
   if (!weather) return <div>Unable to load weather</div>;
 
   return (
-    <div className="flex flex-col items-start mt-4">
+    <div className="flex flex-col items-start mt-12">
       {/* Current Weather */}
       <div className="flex flex-col items-start mb-6">
         <div className="flex items-start">
