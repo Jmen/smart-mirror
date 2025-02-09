@@ -9,6 +9,18 @@ interface LineStatus {
   reason?: string;
 }
 
+interface TflLineStatus {
+  statusSeverity: number;
+  statusSeverityDescription: string;
+  reason?: string;
+}
+
+interface TflLine {
+  id: string;
+  name: string;
+  lineStatuses: TflLineStatus[];
+}
+
 const LINE_COLORS: { [key: string]: string } = {
   'Bakerloo': 'text-[#B36305]',
   'Central': 'text-[#E32017]',
@@ -54,11 +66,11 @@ export default function TubeStatus() {
         }
 
         // Only show lines with disruptions
-        const disrupted = data.filter((line: any) => 
+        const disrupted = data.filter((line: TflLine) => 
           line.lineStatuses[0].statusSeverity !== 10
         );
 
-        setStatuses(disrupted.map((line: any) => ({
+        setStatuses(disrupted.map((line: TflLine) => ({
           id: line.id,
           name: line.name,
           status: line.lineStatuses[0].statusSeverityDescription,
