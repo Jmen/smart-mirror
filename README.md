@@ -52,3 +52,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - TypeScript
 - Tailwind CSS
 - OpenWeatherMap API
+
+## Development
+
+This project was developed using Cursor IDE with the assistance of Claude, an AI language model by Anthropic.
