@@ -121,14 +121,14 @@ export default function Weather() {
           <Image 
             src={`https://openweathermap.org/img/wn/${weather.icon}@2x.png`}
             alt={weather.description}
-            width={80}
-            height={80}
+            width={100}
+            height={100}
             unoptimized
           />
           <div className="flex flex-col ml-2">
-            <span className="text-3xl">Actual {weather.temp}°C</span>
-            <span className="text-2xl text-gray-400">Feels Like {weather.feels_like}°</span>
-            <div className="text-xl">
+            <span className="text-4xl">Actual {weather.temp}°C</span>
+            <span className="text-3xl text-gray-400">Feels Like {weather.feels_like}°</span>
+            <div className="text-2xl">
               <span className="text-red-400">{weather.temp_max}°</span>
               {' / '}
               <span className="text-blue-400">{weather.temp_min}°</span>
@@ -141,15 +141,15 @@ export default function Weather() {
       <div className="flex gap-4">
         {forecast.map((day) => (
           <div key={day.date} className="flex flex-col items-center">
-            <div className="text-sm">{day.date}</div>
+            <div className="text-lg">{day.date}</div>
             <Image 
               src={`https://openweathermap.org/img/wn/${day.icon}.png`}
               alt={day.description}
-              width={40}
-              height={40}
+              width={50}
+              height={50}
               unoptimized
             />
-            <div className="text-sm">{day.temp}°C</div>
+            <div className="text-lg">{day.temp}°C</div>
           </div>
         ))}
       </div>

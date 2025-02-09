@@ -10,7 +10,7 @@ const Clock = dynamic(() => import('./components/Clock'), {
 
 export default function Home() {
   return (
-    <div className="flex flex-col items-center p-8">
+    <div className="flex flex-col items-center p-8 pt-16">
       <div className="flex flex-col items-start w-full">
         <Clock />
         <Weather />

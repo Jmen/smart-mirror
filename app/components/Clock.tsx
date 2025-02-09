@@ -15,7 +15,7 @@ export default function Clock() {
 
   return (
     <div className="flex flex-col">
-      <div className="text-xl mb-2">
+      <div className="text-2xl mb-2">
         {time.toLocaleDateString('en-US', { 
           weekday: 'long',
           year: 'numeric',
@@ -23,7 +23,7 @@ export default function Clock() {
           day: 'numeric'
         })}
       </div>
-      <div className="text-6xl font-bold">
+      <div className="text-7xl font-bold">
         {time.toLocaleTimeString('en-US', {
           hour: '2-digit',
           minute: '2-digit',
