@@ -98,7 +98,7 @@ export default function TubeStatus() {
   if (statuses.length === 0) return null;
 
   return (
-    <div className="flex flex-col mt-16">
+    <div className="flex flex-col mt-6">
       {statuses.map(line => (
         <div key={line.id} className="flex items-center gap-4 mb-2">
           <div className={`text-2xl ${LINE_COLORS[line.name] || 'text-white'}`}>
