@@ -93,6 +93,7 @@ export default function RainProbabilityChart() {
               tickMargin={8}
               tick={{ fontSize: 12, fill: "white" }}
               tickFormatter={(value) => `${value}%`}
+              domain={[0, 100]}
             />
             <Bar
               dataKey="chance"
