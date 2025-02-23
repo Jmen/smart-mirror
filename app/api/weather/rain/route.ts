@@ -62,8 +62,8 @@ export async function GET() {
       }
     })
     .sort((a: WeatherDataPoint, b: WeatherDataPoint) => {
-      // Adjust hours to start from 9 AM
-      const adjustHour = (hour24: number) => (hour24 + 24 - 9) % 24
+      // Adjust hours to start from 6 AM
+      const adjustHour = (hour24: number) => (hour24 + 24 - 6) % 24
       return adjustHour(a.hour24) - adjustHour(b.hour24)
     })
     .map(({ hour, chance }) => ({ hour, chance }))
