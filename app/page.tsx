@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import Weather from './components/Weather';
+import DailyComparison from './components/DailyComparison';
 import NetworkStatus from './components/NetworkStatus';
 import TubeStatus from './components/TubeStatus';
 import RainProbabilityChart from './components/RainProbabilityChart';
@@ -15,6 +16,7 @@ export default function Home() {
       <div className="flex flex-col items-start w-full">
         <Clock />
         <Weather />
+        <DailyComparison />
         <RainProbabilityChart />
         <TubeStatus />
         <NetworkStatus />
