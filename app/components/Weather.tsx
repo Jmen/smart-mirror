@@ -19,21 +19,8 @@ interface ForecastData {
   description: string;
 }
 
-interface WeatherAPIResponse {
-  main: {
-    temp: number;
-    temp_min: number;
-    temp_max: number;
-    feels_like: number;
-  };
-  weather: Array<{
-    description: string;
-    icon: string;
-  }>;
-}
-
 interface APIResponse {
-  current: WeatherAPIResponse;
+  current: WeatherData;
   daily: Array<{
     date: string;
     temp: number;
@@ -59,16 +46,7 @@ export default function Weather() {
           throw new Error(data.error as string);
         }
 
-        const currentData = data.current;
-
-        setWeather({
-          temp: Math.round(currentData.main.temp),
-          temp_min: Math.round(currentData.main.temp_min),
-          temp_max: Math.round(currentData.main.temp_max),
-          feels_like: Math.round(currentData.main.feels_like),
-          description: currentData.weather[0].description,
-          icon: currentData.weather[0].icon,
-        });
+        setWeather(data.current);
 
         // Format each day's ISO date as a short weekday name
         const dailyForecasts = data.daily.map((day) => ({

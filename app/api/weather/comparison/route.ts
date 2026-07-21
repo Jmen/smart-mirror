@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { OPEN_METEO_BASE_URL, getCoordinates } from "@/lib/weather"
 
 interface OpenMeteoResponse {
   current: {
@@ -13,13 +14,11 @@ interface OpenMeteoResponse {
 
 export async function GET() {
   try {
-    const lat = process.env.LATITUDE || "51.5074"
-    const lon = process.env.LONGITUDE || "-0.1278"
+    const { lat, lon } = getCoordinates()
 
-    // Open-Meteo is free and needs no API key; past_days=1 + forecast_days=1
-    // returns daily entries for [yesterday, today]
+    // past_days=1 + forecast_days=1 returns daily entries for [yesterday, today]
     const response = await fetch(
-      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min&current=temperature_2m&past_days=1&forecast_days=1&timezone=auto`
+      `${OPEN_METEO_BASE_URL}/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min&current=temperature_2m&past_days=1&forecast_days=1&timezone=auto`
     )
 
     if (!response.ok) {

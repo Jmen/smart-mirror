@@ -13,19 +13,12 @@ export default function RainProbabilityChart() {
   const [rainData, setRainData] = useState<RainData[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [enabled, setEnabled] = useState(true)
 
   useEffect(() => {
     const fetchRainData = async () => {
       try {
         setError(null)
         const response = await fetch('/api/weather/rain')
-        
-        if (response.status === 503) {
-          setEnabled(false)
-          return
-        }
-        
         const data = await response.json()
 
         if ('error' in data) {
@@ -41,15 +34,12 @@ export default function RainProbabilityChart() {
       }
     }
 
-    if (enabled) {
-      fetchRainData()
-      // Refresh every 5 minutes
-      const interval = setInterval(fetchRainData, 5 * 60 * 1000)
-      return () => clearInterval(interval)
-    }
-  }, [enabled])
+    fetchRainData()
+    // Refresh every 5 minutes
+    const interval = setInterval(fetchRainData, 5 * 60 * 1000)
+    return () => clearInterval(interval)
+  }, [])
 
-  if (!enabled) return null
   if (loading) return null
   if (error) return null
   if (rainData.length === 0) return null

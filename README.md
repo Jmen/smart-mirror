@@ -13,9 +13,11 @@ A Next.js application that displays time, weather, and network status informatio
 - Current temperature with weather icon
 - "Feels like" temperature
 - Daily minimum and maximum temperatures
-- 5-day forecast with icons
+- 7-day forecast with icons
+- Today vs yesterday temperature comparison
+- Chance-of-rain chart for the next 24 hours
 - Auto-updates every 5 minutes
-- Powered by OpenWeatherMap API
+- Powered by the Open-Meteo API (free, no API key required)
 
 ### Network Status
 - Connection status indicator
@@ -31,11 +33,11 @@ First, install the dependencies:
 npm install
 ```
 
-Create a `.env.local` file in the root directory with the following variables:
+Create a `.env.local` file in the root directory with the following variables
+(defaults to central London if not set):
 ```
-NEXT_PUBLIC_OPENWEATHER_API_KEY=your_api_key_here
-NEXT_PUBLIC_LATITUDE=your_latitude
-NEXT_PUBLIC_LONGITUDE=your_longitude
+LATITUDE=your_latitude
+LONGITUDE=your_longitude
 ```
 
 Add the following to your `.eslintrc.json` to handle TypeScript any types:
@@ -60,7 +62,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - Next.js 15 (App Router)
 - TypeScript
 - Tailwind CSS
-- OpenWeatherMap API
+- Open-Meteo API
 
 ## Development
 
