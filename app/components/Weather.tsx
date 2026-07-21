@@ -32,23 +32,14 @@ interface WeatherAPIResponse {
   }>;
 }
 
-interface ForecastAPIResponse {
-  list: Array<{
-    dt: number;
-    dt_txt: string;
-    main: {
-      temp: number;
-    };
-    weather: Array<{
-      description: string;
-      icon: string;
-    }>;
-  }>;
-}
-
 interface APIResponse {
   current: WeatherAPIResponse;
-  forecast: ForecastAPIResponse;
+  daily: Array<{
+    date: string;
+    temp: number;
+    icon: string;
+    description: string;
+  }>;
 }
 
 export default function Weather() {
@@ -69,7 +60,6 @@ export default function Weather() {
         }
 
         const currentData = data.current;
-        const forecastData = data.forecast;
 
         setWeather({
           temp: Math.round(currentData.main.temp),
@@ -80,16 +70,13 @@ export default function Weather() {
           icon: currentData.weather[0].icon,
         });
 
-        // Process forecast data
-        const dailyForecasts = forecastData.list
-          .filter((item: ForecastAPIResponse['list'][0]) => item.dt_txt.includes('12:00:00'))
-          .slice(0, 5)
-          .map((item) => ({
-            date: new Date(item.dt * 1000).toLocaleDateString('en-US', { weekday: 'short' }),
-            temp: Math.round(item.main.temp),
-            icon: item.weather[0].icon,
-            description: item.weather[0].description,
-          }));
+        // Format each day's ISO date as a short weekday name
+        const dailyForecasts = data.daily.map((day) => ({
+          ...day,
+          date: new Date(`${day.date}T12:00:00`).toLocaleDateString('en-US', {
+            weekday: 'short',
+          }),
+        }));
 
         setForecast(dailyForecasts);
       } catch (error) {
@@ -137,7 +124,7 @@ export default function Weather() {
         </div>
       </div>
 
-      {/* 5-day Forecast */}
+      {/* 7-day Forecast */}
       <div className="flex gap-4">
         {forecast.map((day) => (
           <div key={day.date} className="flex flex-col items-center">
