@@ -1,31 +1,57 @@
 import { NextResponse } from 'next/server';
+import { OPEN_METEO_BASE_URL, getCoordinates, wmoToCondition } from '@/lib/weather';
+
+interface OpenMeteoResponse {
+  current: {
+    temperature_2m: number;
+    apparent_temperature: number;
+    weathercode: number;
+    is_day: number;
+  };
+  daily: {
+    time: string[];
+    weathercode: number[];
+    temperature_2m_max: number[];
+    temperature_2m_min: number[];
+  };
+}
 
 export async function GET() {
   try {
-    const [currentResponse, forecastResponse] = await Promise.all([
-      fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${process.env.LATITUDE}&lon=${process.env.LONGITUDE}&appid=${process.env.OPENWEATHER_API_KEY}&units=metric`
-      ),
-      fetch(
-        `https://api.openweathermap.org/data/2.5/forecast?lat=${process.env.LATITUDE}&lon=${process.env.LONGITUDE}&appid=${process.env.OPENWEATHER_API_KEY}&units=metric`
-      )
-    ]);
+    const { lat, lon } = getCoordinates();
 
-    if (!currentResponse.ok || !forecastResponse.ok) {
-      throw new Error('Weather API returned an error');
+    const response = await fetch(
+      `${OPEN_METEO_BASE_URL}/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,apparent_temperature,weathercode,is_day&daily=weathercode,temperature_2m_max,temperature_2m_min&forecast_days=8&timezone=auto`
+    );
+
+    if (!response.ok) {
+      throw new Error(`Open-Meteo API responded with status ${response.status}`);
     }
 
-    const currentData = await currentResponse.json();
-    const forecastData = await forecastResponse.json();
+    const data = (await response.json()) as OpenMeteoResponse;
 
-    // Validate the response data
-    if (!currentData.main || !currentData.weather || !forecastData.list) {
-      throw new Error('Invalid data received from Weather API');
+    if (!data.current || !data.daily?.time || data.daily.time.length < 8) {
+      throw new Error('Invalid data received from Open-Meteo API');
     }
 
-    return NextResponse.json({ current: currentData, forecast: forecastData });
+    const current = {
+      temp: Math.round(data.current.temperature_2m),
+      temp_min: Math.round(data.daily.temperature_2m_min[0]),
+      temp_max: Math.round(data.daily.temperature_2m_max[0]),
+      feels_like: Math.round(data.current.apparent_temperature),
+      ...wmoToCondition(data.current.weathercode, data.current.is_day === 1),
+    };
+
+    // Days 1-7: the week ahead; today's conditions are shown separately
+    const daily = data.daily.time.slice(1).map((date, i) => ({
+      date,
+      temp: Math.round(data.daily.temperature_2m_max[i + 1]),
+      ...wmoToCondition(data.daily.weathercode[i + 1]),
+    }));
+
+    return NextResponse.json({ current, daily });
   } catch (error) {
     console.error('Weather API Error:', error);
     return NextResponse.json({ error: 'Failed to fetch weather data' }, { status: 500 });
   }
-} 
+}
